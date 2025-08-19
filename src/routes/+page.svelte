@@ -1,10 +1,17 @@
 <script>
     const { data, form } = $props();
     import { enhance } from '$app/forms';
-  import { tick } from 'svelte';
+    import { tick, onMount } from 'svelte';
 
     let capitalInput;
     let nextStateButton = $state(null)
+
+    onMount(async () => {
+
+        if(capitalInput) {
+            capitalInput.focus();
+        }
+    });
 </script>
 
 <div class="container-fluid">
@@ -16,10 +23,11 @@
         <form method="POST" action="?/submit" use:enhance={() => {
             return async ({update}) => {
                 await update();
+                await tick();
                 if ((form?.correct || form?.revealed) && nextStateButton) {
                     nextStateButton.focus();
                 }
-                else if (form?.correct === false && capitalInput) {
+                else if (capitalInput) {
                     capitalInput.focus();
                     capitalInput.setSelectionRange(0, capitalInput.value.length);
                 }
